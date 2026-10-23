@@ -247,3 +247,9 @@ The plotting code in Project 1 originally used `times+simsun.ttf` for Chinese an
 - Each Markdown report was converted from the same DOCX file. Equations are written in LaTeX, and figures are stored in the `media/` directory of the project.
 - The reports keep the content in its submitted form. The code only received two portability changes: a font fallback and an `if __name__ == "__main__"` entry point.
 - This repository is intended for course records and reference only. Please follow the university's academic integrity rules.
+
+## 许可证 / License
+
+本项目采用 MIT License，详见 [LICENSE](LICENSE)。  
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
