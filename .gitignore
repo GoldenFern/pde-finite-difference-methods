@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Generated experiment outputs
+Solution-Analysis/
+*.xlsx
+Project1/*.png
+Project2/*.png
+
+# Office and editor temporary files
+~$*.docx
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
