@@ -4,7 +4,7 @@
 
 ## 引言
 
-对流方程是一类重要的偏微分方程，广泛应用于流体动力学和热传导等领域，其基本形式为$u_{t} + au_{x} = 0$。在数值求解过程中，差分格式的稳定性是保证计算结果正确性的关键。本报告旨在通过数值实验分析各种差分格式在处理对流方程时的稳定性和间断点表现效果，并将实验结果与理论结果相对比。
+对流方程是一类重要的偏微分方程，广泛应用于流体动力学和热传导等领域，其基本形式为 $u_{t} + au_{x} = 0$。在数值求解过程中，差分格式的稳定性是保证计算结果正确性的关键。本报告旨在通过数值实验分析各种差分格式在处理对流方程时的稳定性和间断点表现效果，并将实验结果与理论结果相对比。
 
 ## 问题描述
 
@@ -15,23 +15,23 @@ u_{t} + au_{x} = 0 \\
 u\left( 0,x \right) = f\left( x \right) = 1\ \text{if}\ x \leq 0\ \text{else}\ 0 \\
 \end{matrix} \right.\ $$
 
-$x$的网格划分精度为$h = 0.1$，$t$的网格划分精度为$\tau = 0.08$，网格比$\lambda = \frac{\tau}{h} = 0.8$。速度$a$的取值为$1,2,4$。
+$x$的网格划分精度为 $h = 0.1$， $t$的网格划分精度为 $\tau = 0.08$，网格比 $\lambda = \frac{\tau}{h} = 0.8$。速度 $a$的取值为 $1,2,4$。
 
-我们需要用不同的差分方法数值求解该方程在$t = 4.0$时的结果，并对结果的稳定性、间断点附近的计算效果进行分析。
+我们需要用不同的差分方法数值求解该方程在 $t = 4.0$时的结果，并对结果的稳定性、间断点附近的计算效果进行分析。
 
 ## 理论分析
 
 ### 解析解求解
 
-作关于$x$的傅里叶变换得到：
+作关于 $x$的傅里叶变换得到：
 
 $$\mathcal{F}\left( u_{t} \right) + a\mathcal{F}\left( u_{x} \right) = 0$$
 
-记$\widehat{u}\left( t,k \right)= \mathcal{F}\left( u\left( t,x \right) \right)$：
+记 $\widehat{u}\left( t,k \right)= \mathcal{F}\left( u\left( t,x \right) \right)$：
 
 $$\frac{\partial}{\partial t}\widehat{u}\left( t,k \right) + aik\widehat{u}\left( t,k \right) = 0$$
 
-将其看作一个关于$t$的常微分方程，求解得到：
+将其看作一个关于 $t$的常微分方程，求解得到：
 
 $$\widehat{u}\left( k,t \right) = \widehat{u}\left( k,0 \right)e^{ikat}$$
 
@@ -69,11 +69,11 @@ $$u_{j}^{n + 1} = u_{j}^{n} - \frac{a\lambda}{2}\left( u_{j + 1}^{n} - u_{j - 1}
 
 ### 差分方法的实现
 
-在初始化格点矩阵$u$后，分两层遍历，先遍历时间步长，再遍历空间步长，利用差分格式更新格点矩阵的值。
+在初始化格点矩阵 $u$后，分两层遍历，先遍历时间步长，再遍历空间步长，利用差分格式更新格点矩阵的值。
 
 ### 边界处数值的处理
 
-大部分差分方法都需要用到$u_{j - 1}^{n - 1}$和$u_{j + 1}^{n - 1}$来计算下一层的$u_{j}^{n}$。这可能导致在$u_{J_{\min}}^{n}$和$u_{J_{\max}}^{n}$附近的数值计算有问题（找不到$u_{j - 1}^{n - 1}$或$u_{j + 1}^{n - 1}$）。为此我在初始化格点矩阵时，在$t = 0$两端额外添加了两个无效数值np.nan，并且让这个无效数值在计算过程中传递下去，用于标记哪些数据是真正用差分格式计算出来的，哪些格式由于涉及边界数值无法计算的。
+大部分差分方法都需要用到 $u_{j - 1}^{n - 1}$和 $u_{j + 1}^{n - 1}$来计算下一层的 $u_{j}^{n}$。这可能导致在 $u_{J_{\min}}^{n}$和 $u_{J_{\max}}^{n}$附近的数值计算有问题（找不到 $u_{j - 1}^{n - 1}$或 $u_{j + 1}^{n - 1}$）。为此我在初始化格点矩阵时，在 $t = 0$两端额外添加了两个无效数值np.nan，并且让这个无效数值在计算过程中传递下去，用于标记哪些数据是真正用差分格式计算出来的，哪些格式由于涉及边界数值无法计算的。
 
 ### 收敛情况的评估
 
@@ -81,7 +81,7 @@ $$u_{j}^{n + 1} = u_{j}^{n} - \frac{a\lambda}{2}\left( u_{j + 1}^{n} - u_{j - 1}
 
 $$\left| \left| \mathbf{\varepsilon}^{n} \right| \right| = \sqrt{h\sum_{j = - \infty}^{+ \infty}\left( \varepsilon_{j}^{n} \right)^{2}}$$
 
-其中$h$为空间步长，$\varepsilon_{j}^{n}$是该格点解析解与数值解的偏差。
+其中 $h$为空间步长， $\varepsilon_{j}^{n}$是该格点解析解与数值解的偏差。
 
 ### 代码框架
 
@@ -125,21 +125,21 @@ ConvectionEquation类
 
 #### 收敛性分析
 
-截断误差：$O\left( \tau + h \right)$
+截断误差： $O\left( \tau + h \right)$
 
-增长因子：$G = a\lambda e^{- i\omega h} + \left( 1 - a\lambda \right),\lambda = \frac{\tau}{h}$，$\sup G = \max\left( 1,\left( 1 - 2a\lambda \right)^{2} \right)$
+增长因子： $G = a\lambda e^{- i\omega h} + \left( 1 - a\lambda \right),\lambda = \frac{\tau}{h}$， $\sup G = \max\left( 1,\left( 1 - 2a\lambda \right)^{2} \right)$
 
-收敛条件：$a\lambda \leq 1$
+收敛条件： $a\lambda \leq 1$
 
-对于本题，当$a = 1$时该格式收敛，$a = 2,4$时该格式发散。
+对于本题，当 $a = 1$时该格式收敛， $a = 2,4$时该格式发散。
 
 $a = 1$时，L2误差为0.2549，误差较小，表明此时差分格式收敛。这与理论分析结果吻合。
 
-$a = 2,4$时，$a\lambda > 1$，此时差分格式发散。并且随着$a$的增大误差也增大。L2误差分别为$6.291 \times 10^{15}$与$1.884 \times 10^{35}$，在断点附近的误差尤其明显。实际应用中对于这种情况，需要修正网格网格比以使得$a\lambda \leq 1$。
+$a = 2,4$时， $a\lambda > 1$，此时差分格式发散。并且随着 $a$的增大误差也增大。L2误差分别为 $6.291 \times 10^{15}$与 $1.884 \times 10^{35}$，在断点附近的误差尤其明显。实际应用中对于这种情况，需要修正网格网格比以使得 $a\lambda \leq 1$。
 
 #### 间断点附近表现分析
 
-$x$-MPDE：$\frac{1}{2}a\left( 1 - c \right)hu_{\text{xx}} - \frac{1}{6}a\left( c - 1 \right)\left( 2c - 1 \right)h^{2}u_{\text{xxx}}$
+$x$-MPDE： $\frac{1}{2}a\left( 1 - c \right)hu_{\text{xx}} - \frac{1}{6}a\left( c - 1 \right)\left( 2c - 1 \right)h^{2}u_{\text{xxx}}$
 
 一阶耗散为主型。
 
@@ -157,15 +157,15 @@ $a = 1$时，间断点附近曲线大体上平滑的连接在一起，有轻微�
 
 #### 收敛性分析
 
-增长因子：$\left| G \right|^{2} = 1 - 4a\lambda\left( 1 - a\lambda \right)^{2}\left( 2 - a\lambda \right)\sin^{4}\left( \frac{\omega h}{2} \right)$
+增长因子： $\left| G \right|^{2} = 1 - 4a\lambda\left( 1 - a\lambda \right)^{2}\left( 2 - a\lambda \right)\sin^{4}\left( \frac{\omega h}{2} \right)$
 
-收敛条件：$a\lambda \leq 2$
+收敛条件： $a\lambda \leq 2$
 
-对于本题，当$a = 1,2$时该格式收敛，$a = 4$时该格式发散。
+对于本题，当 $a = 1,2$时该格式收敛， $a = 4$时该格式发散。
 
-$a = 1$时，L2误差为0.2355；$a = 2$时，L2误差为0.2426，误差较小，表明数值结果收敛，与理论分析相符合。
+$a = 1$时，L2误差为0.2355； $a = 2$时，L2误差为0.2426，误差较小，表明数值结果收敛，与理论分析相符合。
 
-$a = 4$时，$a\lambda > 2$，L2误差为$3.184 \times 10^{45}$。此时差分方法发散。
+$a = 4$时， $a\lambda > 2$，L2误差为 $3.184 \times 10^{45}$。此时差分方法发散。
 
 #### 间断点附近表现分析
 
@@ -187,17 +187,17 @@ $a = 2$时，在间断点附近有较为明显的波头振荡。
 
 #### 收敛性分析
 
-截断误差：$O\left( \tau + \frac{h^{2}}{\tau} + h^{2} \right)$
+截断误差： $O\left( \tau + \frac{h^{2}}{\tau} + h^{2} \right)$
 
-增长因子：$G = \cos\omega h - ia\lambda\sin\omega h,\lambda = \frac{\tau}{h}$，$\sup G = \max\left( 1,a^{2}\lambda^{2} \right)$
+增长因子： $G = \cos\omega h - ia\lambda\sin\omega h,\lambda = \frac{\tau}{h}$， $\sup G = \max\left( 1,a^{2}\lambda^{2} \right)$
 
-收敛条件：$a\lambda \leq 1$
+收敛条件： $a\lambda \leq 1$
 
-对于本题，当$a = 1$时该格式收敛，$a = 2,4$时该格式发散。数值结果与理论分析相符合。
+对于本题，当 $a = 1$时该格式收敛， $a = 2,4$时该格式发散。数值结果与理论分析相符合。
 
 #### 间断点附近表现分析
 
-$x$-MPDE：$\frac{1}{2\tau}\left( 1 - c^{2} \right)h^{2}u_{\text{xx}} + \frac{1}{3}a\left( 1 - c^{2} \right)h^{2}u_{\text{xxx}} + \ldots$
+$x$-MPDE： $\frac{1}{2\tau}\left( 1 - c^{2} \right)h^{2}u_{\text{xx}} + \frac{1}{3}a\left( 1 - c^{2} \right)h^{2}u_{\text{xxx}} + \ldots$
 
 $a = 1$时，间断点附近有细微的波纹振动，结果表现出一定的耗散。这与Lax-Friedrichs格式是一阶耗散为主型相匹配。
 
@@ -213,17 +213,17 @@ $a = 1$时，间断点附近有细微的波纹振动，结果表现出一定的�
 
 #### 收敛性分析
 
-截断误差：$O\left( h^{2} + \tau^{2} \right)$
+截断误差： $O\left( h^{2} + \tau^{2} \right)$
 
-增长因子：$G = 1 - 2a^{2}\lambda^{2}\sin^{2}\frac{\omega h}{2} - ia\lambda\sin\omega h$
+增长因子： $G = 1 - 2a^{2}\lambda^{2}\sin^{2}\frac{\omega h}{2} - ia\lambda\sin\omega h$
 
-收敛条件：$a\lambda \leq 1$
+收敛条件： $a\lambda \leq 1$
 
-对于本题，当$a = 1$时该格式收敛，$a = 2,4$时该格式发散。数值实验结果与理论分析相吻合。
+对于本题，当 $a = 1$时该格式收敛， $a = 2,4$时该格式发散。数值实验结果与理论分析相吻合。
 
 #### 间断点附近表现分析
 
-$x$-MPDE：$\frac{1}{6}a\left( c^{2} - 1 \right)h^{2}u_{\text{xxx}} + \frac{1}{8}ac\left( c^{2} - 1 \right)h^{3}u_{\text{xxxx}} + \ldots$
+$x$-MPDE： $\frac{1}{6}a\left( c^{2} - 1 \right)h^{2}u_{\text{xxx}} + \frac{1}{8}ac\left( c^{2} - 1 \right)h^{3}u_{\text{xxxx}} + \ldots$
 
 $a = 1$时在间断点的附近波头有明显的振荡，呈现出较为明显的色散效应。这与该格式是一阶色散为主型相符合。
 

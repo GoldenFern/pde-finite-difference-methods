@@ -24,13 +24,13 @@ $$\left\lbrace \begin{matrix}
 u\left( x,y \right) = 0,\left( x,y \right) \in \partial\Omega \\
 \end{matrix} \right.\ ,\Omega = \left( 0,1 \right) \times \left( 0,1 \right)$$
 
-这个方程有解析解$u = \sin\pi x\sin\pi y$，能够让我们更加方便地分析数值结果的准确性。
+这个方程有解析解 $u = \sin\pi x\sin\pi y$，能够让我们更加方便地分析数值结果的准确性。
 
 ## 3 数值方法
 
 ### 3.1 五点差分
 
-将矩形区域在$x$方向划分为$I + 1$等份，$x_{i} = ih$，$y$方向划分为$J + 1$等份，$y_{j} = jh$。将方程的信息离散化（五点差分）：
+将矩形区域在 $x$方向划分为 $I + 1$等份， $x_{i} = ih$， $y$方向划分为 $J + 1$等份， $y_{j} = jh$。将方程的信息离散化（五点差分）：
 
 $$\Delta_{h}u_{\text{ij}} ≔ \frac{u_{i + 1,j} - 2u_{\text{ij}} + u_{i - 1,j}}{h^{2}} + \frac{u_{i,j + 1} - 2u_{\text{ij}} + u_{i,j - 1}}{k^{2}}$$
 
@@ -41,7 +41,7 @@ $$\left\lbrace \begin{matrix}
 u_{\text{ij}} = \alpha_{\text{ij}},i \in \left\lbrace 0,I + 1 \right\rbrace \text{或} j \in \left\lbrace 0,J + 1 \right\rbrace \\
 \end{matrix} \right.\ $$
 
-这种划分求解方式具有稳定性和唯一性，具有二阶精度$O\left( h^{2} \right)$。
+这种划分求解方式具有稳定性和唯一性，具有二阶精度 $O\left( h^{2} \right)$。
 
 ### 3.2 迭代法求解
 
@@ -52,9 +52,9 @@ u_{\text{ij}}^{\text{new}} = \frac{1}{4}\left( u_{i + 1,j}^{\text{old}} + u_{i -
 u_{\text{ij}}^{\text{new}} = u_{\text{ij}}^{\text{old}} = \alpha_{\text{ij}} \\
 \end{matrix} \right.\ $$
 
-在用python实现Jacobi迭代法时，我注意到除了使用两层for循环遍历矩阵$U_{\text{old}}$中的每一个元素并利用其周围的值更新$U_{\text{new}}$外，还可以使用卷积的方式来完成计算。
+在用python实现Jacobi迭代法时，我注意到除了使用两层for循环遍历矩阵 $U_{\text{old}}$中的每一个元素并利用其周围的值更新 $U_{\text{new}}$外，还可以使用卷积的方式来完成计算。
 
-对于$x$轴划分步长为$h$，$y$轴划分步长为$k$的情况，卷积核$K$可以表示为：
+对于 $x$轴划分步长为 $h$， $y$轴划分步长为 $k$的情况，卷积核 $K$可以表示为：
 
 $$K = \begin{bmatrix}
 0 & \frac{1}{k^{2}} & 0 \\
@@ -62,11 +62,11 @@ $$K = \begin{bmatrix}
 0 & \frac{1}{k^{2}} & 0 \\
 \end{bmatrix}$$
 
-那么矩阵$U_{\text{new}}$和$U_{\text{old}}$可以表示为：
+那么矩阵 $U_{\text{new}}$和 $U_{\text{old}}$可以表示为：
 
 $$U_{\text{new}} = \left( U_{\text{old}}*K - F \right) \bullet \frac{1}{\frac{2}{h^{2}} + \frac{2}{k^{2}}}$$
 
-在卷积时为了保持$U_{\text{new}}$的形状不变并且边界条件被考虑在内，$U_{\text{new}}$需要在其边界进行补零操作。
+在卷积时为了保持 $U_{\text{new}}$的形状不变并且边界条件被考虑在内， $U_{\text{new}}$需要在其边界进行补零操作。
 
 scipy提供的卷积方法scipy.signal.convolve2d是一个已经高度优化的函数，对卷积计算有明显的加速。而对于后续的Gauss-Seidel迭代法和SOR迭代法由于需要按照一定顺序进行计算，我无法用卷积的形式去表示。这可能导致利用卷积加速的Jacobi迭代法的迭代次数高于Gauss-Seidel迭代法和SOR迭代法，但总运算速度却快得多。为了更加全面的分析不同迭代法的差距，我编写了两个实践Jacobi迭代法的方法：一个是method\_jacobi\_iteration，用for循环实现；另一个是method\_jacobi\_iteration\_convolve，用scipy.signal.convolve2d实现。
 
@@ -83,7 +83,7 @@ u_{\text{ij}}^{\text{new}} = u_{\text{ij}}^{\text{old}} = \alpha_{\text{ij}} \\
 
 #### 3.2.3 SOR迭代法
 
-SOR方法是Gauss-Seidel方法的推广，引入了一个松弛因子$\omega$来加速收敛。通过对Gauss-Seidel迭代公式的每次迭代结果进行加权平均，可以得到SOR迭代公式：
+SOR方法是Gauss-Seidel方法的推广，引入了一个松弛因子 $\omega$来加速收敛。通过对Gauss-Seidel迭代公式的每次迭代结果进行加权平均，可以得到SOR迭代公式：
 
 $$\left\lbrace \begin{matrix}
 {\widetilde{u}}_{\text{ij}}^{\text{new}} = \frac{1}{4}\left( {\widetilde{u}}_{i + 1,j}^{\text{new}} + {\widetilde{u}}_{i - 1,j}^{\text{new}} + u_{i,j + 1}^{\text{old}} + u_{i,j - 1}^{\text{old}} \right) - \frac{1}{4}h^{2}f_{\text{ij}} \\
@@ -92,7 +92,7 @@ $$\left\lbrace \begin{matrix}
 
 $$u_{\text{ij}}^{\text{new}} = \omega{\widetilde{u}}_{\text{ij}}^{\text{new}} + \left( 1 - \omega \right)u_{\text{ij}}^{\text{old}}$$
 
-当$\omega = 1$时，SOR方法退化为Gauss-Seidel方法。选择合适的$\omega$可以显著提高迭代的收敛速度。本次数值实验中我选取的$\omega$为1.5。
+当 $\omega = 1$时，SOR方法退化为Gauss-Seidel方法。选择合适的 $\omega$可以显著提高迭代的收敛速度。本次数值实验中我选取的 $\omega$为1.5。
 
 ### 3.3 解线性方程组
 
@@ -114,19 +114,19 @@ f_{I1} & f_{I2} & \ldots & f_{\text{IJ}} \\
 
 $$A = \frac{1}{h^{2}}\begin{bmatrix}
 2 & - 1 & \  & \  \\
- - 1 & 2 & \ddots & \  \\
+-1 & 2 & \ddots & \  \\
 \  & \ddots & \ddots & - 1 \\
 \  & \  & - 1 & 2 \\
 \end{bmatrix}_{I \times I},B = \frac{1}{k^{2}}\begin{bmatrix}
 2 & - 1 & \  & \  \\
- - 1 & 2 & \ddots & \  \\
+-1 & 2 & \ddots & \  \\
 \  & \ddots & \ddots & - 1 \\
 \  & \  & - 1 & 2 \\
 \end{bmatrix}_{I \times I}$$
 
 $$AU + UB = F$$
 
-将$U$和$F$按照列拉直，得到一个线性方程组：
+将 $U$和 $F$按照列拉直，得到一个线性方程组：
 
 $$\left( I\bigotimes A + B\bigotimes I \right)\overrightarrow{U} = \overrightarrow{F}$$
 
@@ -134,13 +134,13 @@ $$\left( I\bigotimes A + B\bigotimes I \right)\overrightarrow{U} = \overrightarr
 
 ### 3.4 离散正弦傅里叶变换
 
-利用线性代数的相关知识可以推导出$U$的表达式：
+利用线性代数的相关知识可以推导出 $U$的表达式：
 
 $$U = \sum_{i = 1}^{I}{\sum_{j = 1}^{J}{\frac{4\mathbf{u}_{i}^{T}F\mathbf{v}_{j}}{\left( \lambda_{i} + \mu_{j} \right)\left( I + 1 \right)\left( J + 1 \right)}\mathbf{u}_{i}\mathbf{v}_{j}^{T}}}$$
 
-其中$\mathbf{u}_{i}$和$\mathbf{v}_{i}$是矩阵$A,B$的特征向量，$\lambda_{i},\mu_{i}$是矩阵$A,B$的特征值。
+其中 $\mathbf{u}_ {i}$和 $\mathbf{v}_ {i}$是矩阵 $A,B$的特征向量， $\lambda_{i},\mu_{i}$是矩阵 $A,B$的特征值。
 
-将矩阵$A$的特征向量按照列排成一个$I \times I$矩阵$P$，矩阵$B$的特征向量按照列排成一个$J \times J$矩阵$Q$。$P$的第$\left( m,n \right)$个元素为$\sin\frac{mn\pi}{I + 1}$，$Q$的第$\left( m,n \right)$个元素为$\sin\frac{mn\pi}{J + 1}$。那么$U$可以表示为：
+将矩阵 $A$的特征向量按照列排成一个 $I \times I$矩阵 $P$，矩阵 $B$的特征向量按照列排成一个 $J \times J$矩阵 $Q$。 $P$的第 $\left( m,n \right)$个元素为 $\sin\frac{mn\pi}{I + 1}$， $Q$的第 $\left( m,n \right)$个元素为 $\sin\frac{mn\pi}{J + 1}$。那么 $U$可以表示为：
 
 $$V = PFQ$$
 
@@ -148,13 +148,13 @@ $$w_{\text{ij}} = \frac{4v_{\text{ij}}}{\left( \lambda_{i} + \mu_{j} \right)\lef
 
 $$U = PWQ$$
 
-在完成上述计算时，最重要的是如何快速计算$V = PFQ$与$U = PWQ$两个大型矩阵运算。考虑到$P,Q$两个矩阵的每一项的特点，可以用离散正弦变换来加速这一矩阵乘法计算，即对$F$或$Q$进行一次按行的离散正弦变换和按列的离散正弦变换。
+在完成上述计算时，最重要的是如何快速计算 $V = PFQ$与 $U = PWQ$两个大型矩阵运算。考虑到 $P,Q$两个矩阵的每一项的特点，可以用离散正弦变换来加速这一矩阵乘法计算，即对 $F$或 $Q$进行一次按行的离散正弦变换和按列的离散正弦变换。
 
 scipy.fft中提供了离散正弦变换的函数dst。该函数提供了四种类型的离散正弦变换，通过type参数指定，默认是第二类离散正弦变换（type=2）。符合本次矩阵乘法的是type=1，并且再此基础上还需要除以二。并且该函数还接受参数axis，指定是按照行进行离散正弦变换还是按照列进行离散正弦变换。具体实现利用DST加速矩阵运算的代码为：dst\_transform = lambda mat: dst(dst(mat, type=1, axis=1),type=1, axis=0)/4
 
 ## 4 实验方法
 
-本次数值实验所求解的方程是定义在$\Omega = \left( 0,x_{\max} \right) \times \left( 0,y_{\max} \right)$上的满足齐次Dirichlet边界条件的Poisson方程。作业所要求的问题1和问题3均已在第3节所说的所有方法中实现。而问题2我会在后续解决。
+本次数值实验所求解的方程是定义在 $\Omega = \left( 0,x_{\max} \right) \times \left( 0,y_{\max} \right)$上的满足齐次Dirichlet边界条件的Poisson方程。作业所要求的问题1和问题3均已在第3节所说的所有方法中实现。而问题2我会在后续解决。
 
 具体代码逻辑如下：
 
@@ -190,7 +190,7 @@ scipy.fft中提供了离散正弦变换的函数dst。该函数提供了四种�
 
 3.  子类**NonhomogeneousPoissonEquation**：推广至非齐次条件
 
-4.  实例：应用主函数于第2节中所举的例子，格点划分数$n$从20增加至120。
+4.  实例：应用主函数于第2节中所举的例子，格点划分数 $n$从20增加至120。
 
 ## 5 实验结果
 
@@ -198,7 +198,7 @@ scipy.fft中提供了离散正弦变换的函数dst。该函数提供了四种�
 
 ![](media/image1.png) 
 
-由图中可以看出，随着划分格点数$n$的增加，求解时间大体呈递增的趋势。而运算速度的排序为：
+由图中可以看出，随着划分格点数 $n$的增加，求解时间大体呈递增的趋势。而运算速度的排序为：
 
 DST&gt;Jacobi迭代（卷积加速）&gt;LU分解&gt;SOR迭代&gt;Gauss-Seidel迭代&gt;Jacobi迭代（无卷积加速）
 
@@ -214,13 +214,13 @@ DST&gt;Jacobi迭代（卷积加速）&gt;LU分解&gt;SOR迭代&gt;Gauss-Seidel�
 
 图中Jacobi-卷积加速和Jacobi曲线完全重合，DST和LU分解法曲线完全重合。
 
-注意到随着$n$的增加迭代方法产生的误差反而更大了。这可能和迭代方法的相关参数有关。在迭代时我们需要判断何时终止迭代，我的代码中判断逻辑为当$U_{\text{new}} - U_{\text{old}}$的绝对值的最大元素小于容忍项$tol = 1.0 \times 10^{- 4}$时终止迭代。在进行实验时，容忍项$\mathrm{tol}$的值是一个定值，没有随$n$一同改变。然而实际上为了达到相同的精度，提高$n$的值的同时也需要减小$\mathrm{tol}$的值。所以图中的误差随着$n$的增大反而减小的现象可能是正常情况，不能据此说明迭代法不收敛。同时由于$\mathrm{tol}$项的存在，根据图像比较不同迭代法的精度可能没有意义。
+注意到随着 $n$的增加迭代方法产生的误差反而更大了。这可能和迭代方法的相关参数有关。在迭代时我们需要判断何时终止迭代，我的代码中判断逻辑为当 $U_{\text{new}} - U_{\text{old}}$的绝对值的最大元素小于容忍项 $tol = 1.0 \times 10^{- 4}$时终止迭代。在进行实验时，容忍项 $\mathrm{tol}$的值是一个定值，没有随 $n$一同改变。然而实际上为了达到相同的精度，提高 $n$的值的同时也需要减小 $\mathrm{tol}$的值。所以图中的误差随着 $n$的增大反而减小的现象可能是正常情况，不能据此说明迭代法不收敛。同时由于 $\mathrm{tol}$项的存在，根据图像比较不同迭代法的精度可能没有意义。
 
 在图中DST和LU分解方法的变化情况不明显。对于这两种方法绘图如下：
 
 ![](media/image3.png) 
 
-二者都是求解同一个矩阵方程，只是计算方法不同，故二者的误差完全一致。并且随着$n$的增加，截断误差单调递减。这与理论上五点差分法的误差为$O\left( h^{2} \right)$相符合。
+二者都是求解同一个矩阵方程，只是计算方法不同，故二者的误差完全一致。并且随着 $n$的增加，截断误差单调递减。这与理论上五点差分法的误差为 $O\left( h^{2} \right)$相符合。
 
 具体计算误差列表如下：
 
@@ -238,7 +238,7 @@ DST&gt;Jacobi迭代（卷积加速）&gt;LU分解&gt;SOR迭代&gt;Gauss-Seidel�
 
 ![](media/image4.png) 
 
-将定义域由$\left\lbrack 0,1 \right\rbrack \times \left\lbrack 0,1 \right\rbrack$更改为$\left\lbrack 0,a \right\rbrack \times \left\lbrack 0,b \right\rbrack$：
+将定义域由 $\left\lbrack 0,1 \right\rbrack \times \left\lbrack 0,1 \right\rbrack$更改为 $\left\lbrack 0,a \right\rbrack \times \left\lbrack 0,b \right\rbrack$：
 
 ![](media/image5.png) ![](media/image6.png) 
 
@@ -255,20 +255,20 @@ u\left( x,y \right) = \alpha\left( x,y \right),\left( x,y \right) \in \partial\O
 
 ### 6.1 迭代法
 
-对于迭代法，以卷积加速的Jacobi迭代法为例，如果需要修改使得其能够适应，则需要修改卷积时对边界值的填充。齐次方程求解时边界值均填充的是0，而非齐次方程则需要根据$\alpha\left( x,y \right)$的值来填充。
+对于迭代法，以卷积加速的Jacobi迭代法为例，如果需要修改使得其能够适应，则需要修改卷积时对边界值的填充。齐次方程求解时边界值均填充的是0，而非齐次方程则需要根据 $\alpha\left( x,y \right)$的值来填充。
 
 ### 6.2 矩阵方程
 
-而对于矩阵方程，我们则需要修改$F$矩阵的中$f_{1j},f_{i1},f_{\text{nj}},f_{\text{in}}$的值使其适配非齐次Dirichlet边界条件。具体修正方案如下：
+而对于矩阵方程，我们则需要修改 $F$矩阵的中 $f_{1j},f_{i1},f_{\text{nj}},f_{\text{in}}$的值使其适配非齐次Dirichlet边界条件。具体修正方案如下：
 
 | 齐次项                                                                                                                                                                                                                                                                                                                                                                                                        | 非齐次修正                                                            |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
-| $\mathbf{-}\mathbf{f}_{\mathbf{1}\mathbf{j}}\mathbf{=}\frac{\mathbf{2}\mathbf{u}_{\mathbf{1}\mathbf{j}}\mathbf{-}\mathbf{u}_{\mathbf{2}\mathbf{j}}}{\mathbf{h}^{\mathbf{2}}}\mathbf{+}\frac{\mathbf{2}\mathbf{u}_{\mathbf{j}\mathbf{1}}\mathbf{-}\mathbf{u}_{\left( \mathbf{j - 1} \right)\mathbf{1}}\mathbf{-}\mathbf{u}_{\left( \mathbf{j + 1} \right)\mathbf{1}}}{\mathbf{k}^{\mathbf{2}}}$              | $- f_{1j}^{*} = - f_{1j} - \frac{u_{0j}}{h^{2}}$                    |
-| $\mathbf{-}\mathbf{f}_{\mathbf{i}\mathbf{1}}\mathbf{=}\frac{\mathbf{2}\mathbf{u}_{\mathbf{i}\mathbf{1}}\mathbf{-}\mathbf{u}_{\left( \mathbf{i - 1} \right)\mathbf{1}}\mathbf{-}\mathbf{u}_{\left( \mathbf{i + 1} \right)\mathbf{1}}}{\mathbf{h}^{\mathbf{2}}}\mathbf{+}\frac{\mathbf{2}\mathbf{u}_{\mathbf{i}\mathbf{1}}\mathbf{-}\mathbf{u}_{\mathbf{i}\mathbf{2}}}{\mathbf{k}^{\mathbf{2}}}$              | $- f_{1j}^{*} = - f_{1j} - \frac{u_{i0}}{k^{2}}$                    |
-| $\mathbf{-}\mathbf{f}_{\mathbf{\text{nj}}}\mathbf{=}\frac{\mathbf{2}\mathbf{u}_{\mathbf{\text{nj}}}\mathbf{-}\mathbf{u}_{\left( \mathbf{n - 1} \right)\mathbf{j}}}{\mathbf{h}^{\mathbf{2}}}\mathbf{+}\frac{\mathbf{2}\mathbf{u}_{\mathbf{\text{jn}}}\mathbf{-}\mathbf{u}_{\left( \mathbf{j - 1} \right)\mathbf{n}}\mathbf{-}\mathbf{u}_{\left( \mathbf{j + 1} \right)\mathbf{n}}}{\mathbf{k}^{\mathbf{2}}}$ | $- f_{1j}^{*} = - f_{1j} - \frac{u_{\left( n + 1 \right)j}}{h^{2}}$ |
-| $\mathbf{-}\mathbf{f}_{\mathbf{\text{in}}}\mathbf{=}\frac{\mathbf{2}\mathbf{u}_{\mathbf{\text{in}}}\mathbf{-}\mathbf{u}_{\left( \mathbf{i - 1} \right)\mathbf{n}}\mathbf{-}\mathbf{u}_{\left( \mathbf{i + 1} \right)\mathbf{n}}}{\mathbf{h}^{\mathbf{2}}}\mathbf{+}\frac{\mathbf{2}\mathbf{u}_{\mathbf{\text{in}}}\mathbf{-}\mathbf{u}_{\mathbf{i}\left( \mathbf{n - 1} \right)}}{\mathbf{k}^{\mathbf{2}}}$ | $- f_{1j}^{*} = - f_{1j} - \frac{u_{i\left( n + 1 \right)}}{k^{2}}$ |
+| $\mathbf{-}\mathbf{f}_ {\mathbf{1}\mathbf{j}}\mathbf{=}\frac{\mathbf{2}\mathbf{u}_ {\mathbf{1}\mathbf{j}}\mathbf{-}\mathbf{u}_ {\mathbf{2}\mathbf{j}}}{\mathbf{h}^{\mathbf{2}}}\mathbf{+}\frac{\mathbf{2}\mathbf{u}_ {\mathbf{j}\mathbf{1}}\mathbf{-}\mathbf{u}_ {\left( \mathbf{j - 1} \right)\mathbf{1}}\mathbf{-}\mathbf{u}_ {\left( \mathbf{j + 1} \right)\mathbf{1}}}{\mathbf{k}^{\mathbf{2}}}$              | $- f_{1j}^{*} = - f_{1j} - \frac{u_{0j}}{h^{2}}$                    |
+| $\mathbf{-}\mathbf{f}_ {\mathbf{i}\mathbf{1}}\mathbf{=}\frac{\mathbf{2}\mathbf{u}_ {\mathbf{i}\mathbf{1}}\mathbf{-}\mathbf{u}_ {\left( \mathbf{i - 1} \right)\mathbf{1}}\mathbf{-}\mathbf{u}_ {\left( \mathbf{i + 1} \right)\mathbf{1}}}{\mathbf{h}^{\mathbf{2}}}\mathbf{+}\frac{\mathbf{2}\mathbf{u}_ {\mathbf{i}\mathbf{1}}\mathbf{-}\mathbf{u}_ {\mathbf{i}\mathbf{2}}}{\mathbf{k}^{\mathbf{2}}}$              | $- f_{1j}^{*} = - f_{1j} - \frac{u_{i0}}{k^{2}}$                    |
+| $\mathbf{-}\mathbf{f}_ {\mathbf{\text{nj}}}\mathbf{=}\frac{\mathbf{2}\mathbf{u}_ {\mathbf{\text{nj}}}\mathbf{-}\mathbf{u}_ {\left( \mathbf{n - 1} \right)\mathbf{j}}}{\mathbf{h}^{\mathbf{2}}}\mathbf{+}\frac{\mathbf{2}\mathbf{u}_ {\mathbf{\text{jn}}}\mathbf{-}\mathbf{u}_ {\left( \mathbf{j - 1} \right)\mathbf{n}}\mathbf{-}\mathbf{u}_ {\left( \mathbf{j + 1} \right)\mathbf{n}}}{\mathbf{k}^{\mathbf{2}}}$ | $- f_{1j}^{*} = - f_{1j} - \frac{u_{\left( n + 1 \right)j}}{h^{2}}$ |
+| $\mathbf{-}\mathbf{f}_ {\mathbf{\text{in}}}\mathbf{=}\frac{\mathbf{2}\mathbf{u}_ {\mathbf{\text{in}}}\mathbf{-}\mathbf{u}_ {\left( \mathbf{i - 1} \right)\mathbf{n}}\mathbf{-}\mathbf{u}_ {\left( \mathbf{i + 1} \right)\mathbf{n}}}{\mathbf{h}^{\mathbf{2}}}\mathbf{+}\frac{\mathbf{2}\mathbf{u}_ {\mathbf{\text{in}}}\mathbf{-}\mathbf{u}_ {\mathbf{i}\left( \mathbf{n - 1} \right)}}{\mathbf{k}^{\mathbf{2}}}$ | $- f_{1j}^{*} = - f_{1j} - \frac{u_{i\left( n + 1 \right)}}{k^{2}}$ |
 
-注意四个角的值要修正两次。同时代码中也需要注意，矩阵方程中的$F$矩阵需要更改，而迭代法中的$F$矩阵不需要更改。
+注意四个角的值要修正两次。同时代码中也需要注意，矩阵方程中的 $F$矩阵需要更改，而迭代法中的 $F$矩阵不需要更改。
 
 ### 6.3 求解结果
 
@@ -279,9 +279,9 @@ $$\left\lbrace \begin{matrix}
 u = x^{2} + y^{2},x \in \partial\Omega \\
 \end{matrix},\Omega = \left( 0,1 \right) \times \left( 0,1 \right) \right.\ $$
 
-这个方程的解析解为$u = x^{2} + y^{2}$。
+这个方程的解析解为 $u = x^{2} + y^{2}$。
 
-卷积加速的Jacobi迭代法求解结果（$n = 40$）：
+卷积加速的Jacobi迭代法求解结果（ $n = 40$）：
 
 ![](media/image9.png) 
 
@@ -291,13 +291,13 @@ DST求解的结果：
 
 ![](media/image10.png) 
 
-与解析解的偏差：最大偏差$1.332 \times 10^{- 15}$，平均偏差$2.249 \times 10^{- 16}$。
+与解析解的偏差：最大偏差 $1.332 \times 10^{- 15}$，平均偏差 $2.249 \times 10^{- 16}$。
 
 以上结果表明代码能够顺利地求解非齐次边界条件下的微分方程。
 
 ## 7 总结
 
-本次python数值实验综合比较和分析了五点差分法在求解矩形域上Poisson方程时不同数值解法的性能。实验涵盖了离散正弦变换（DST）、Jacobi迭代、Gauss-Seidel迭代、LU分解、SOR迭代这几种方法，在不同网格划分下评估了它们的求解精度和运行时间。结果表明，DST方法在运行速度上显著优于其他方法。在求解精度方面，DST和LU分解方法表现出了较高的准确性。同时，求解代码能够将迭代方法和矩阵方程方法拓充至$\left\lbrack 0,a \right\rbrack \times \left\lbrack 0,b \right\rbrack$与非齐次边界条件的情况。
+本次python数值实验综合比较和分析了五点差分法在求解矩形域上Poisson方程时不同数值解法的性能。实验涵盖了离散正弦变换（DST）、Jacobi迭代、Gauss-Seidel迭代、LU分解、SOR迭代这几种方法，在不同网格划分下评估了它们的求解精度和运行时间。结果表明，DST方法在运行速度上显著优于其他方法。在求解精度方面，DST和LU分解方法表现出了较高的准确性。同时，求解代码能够将迭代方法和矩阵方程方法拓充至 $\left\lbrack 0,a \right\rbrack \times \left\lbrack 0,b \right\rbrack$与非齐次边界条件的情况。
 
 ## 8 附录
 
