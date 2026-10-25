@@ -10,7 +10,7 @@
 
 对于一个二维矩形域上的满足齐次Dirichlet边界条件的Poisson方程，其形式为：
 
-$$\left\{ \begin{matrix}
+$$\left\lbrace \begin{matrix}
 \Delta u\left( x,y \right) = f\left( x,y \right),\left( x,y \right) \in \Omega \\
 u\left( x,y \right) = 0,\left( x,y \right) \in \partial\Omega \\
 \end{matrix} \right.\ ,\Omega = \left( 0,a \right) \times \left( 0,b \right)$$
@@ -19,7 +19,7 @@ u\left( x,y \right) = 0,\left( x,y \right) \in \partial\Omega \\
 
 在本次数值实验中，我所选择的具体算例为：
 
-$$\left\{ \begin{matrix}
+$$\left\lbrace \begin{matrix}
 \Delta u\left( x,y \right) = - 2\pi^{2}\sin\pi x\sin\pi y,\left( x,y \right) \in \Omega \\
 u\left( x,y \right) = 0,\left( x,y \right) \in \partial\Omega \\
 \end{matrix} \right.\ ,\Omega = \left( 0,1 \right) \times \left( 0,1 \right)$$
@@ -36,9 +36,9 @@ $$\Delta_{h}u_{\text{ij}} ≔ \frac{u_{i + 1,j} - 2u_{\text{ij}} + u_{i - 1,j}}{
 
 即：
 
-$$\left\{ \begin{matrix}
+$$\left\lbrace \begin{matrix}
 \Delta_{h}u_{\text{ij}} = f_{\text{ij}},1 \leq i \leq I,1 \leq j \leq J \\
-u_{\text{ij}} = \alpha_{\text{ij}},i \in \left\{ 0,I + 1 \right\} \text{或} j \in \left\{ 0,J + 1 \right\} \\
+u_{\text{ij}} = \alpha_{\text{ij}},i \in \left\lbrace 0,I + 1 \right\rbrace \text{或} j \in \left\lbrace 0,J + 1 \right\rbrace \\
 \end{matrix} \right.\ $$
 
 这种划分求解方式具有稳定性和唯一性，具有二阶精度$O\left( h^{2} \right)$。
@@ -47,7 +47,7 @@ u_{\text{ij}} = \alpha_{\text{ij}},i \in \left\{ 0,I + 1 \right\} \text{或} j \
 
 #### 3.2.1 Jacobi迭代法
 
-$$\left\{ \begin{matrix}
+$$\left\lbrace \begin{matrix}
 u_{\text{ij}}^{\text{new}} = \frac{1}{4}\left( u_{i + 1,j}^{\text{old}} + u_{i - 1,j}^{\text{old}} + u_{i,j + 1}^{\text{old}} + u_{i,j - 1}^{\text{old}} \right) - \frac{1}{4}h^{2}f_{\text{ij}} \\
 u_{\text{ij}}^{\text{new}} = u_{\text{ij}}^{\text{old}} = \alpha_{\text{ij}} \\
 \end{matrix} \right.\ $$
@@ -74,7 +74,7 @@ scipy提供的卷积方法scipy.signal.convolve2d是一个已经高度优化的�
 
 Gauss-Seidel迭代法是Jacobi迭代法的一个改进版本，其迭代公式考虑了最新的迭代值，这样可以加快收敛速度。在Gauss-Seidel方法中，每次迭代时使用已经计算出的新值更新未知数，迭代公式为：
 
-$$\left\{ \begin{matrix}
+$$\left\lbrace \begin{matrix}
 u_{\text{ij}}^{\text{new}} = \frac{1}{4}\left( u_{i + 1,j}^{\text{new}} + u_{i - 1,j}^{\text{new}} + u_{i,j + 1}^{\text{old}} + u_{i,j - 1}^{\text{old}} \right) - \frac{1}{4}h^{2}f_{\text{ij}} \\
 u_{\text{ij}}^{\text{new}} = u_{\text{ij}}^{\text{old}} = \alpha_{\text{ij}} \\
 \end{matrix} \right.\ $$
@@ -85,7 +85,7 @@ u_{\text{ij}}^{\text{new}} = u_{\text{ij}}^{\text{old}} = \alpha_{\text{ij}} \\
 
 SOR方法是Gauss-Seidel方法的推广，引入了一个松弛因子$\omega$来加速收敛。通过对Gauss-Seidel迭代公式的每次迭代结果进行加权平均，可以得到SOR迭代公式：
 
-$$\left\{ \begin{matrix}
+$$\left\lbrace \begin{matrix}
 {\widetilde{u}}_{\text{ij}}^{\text{new}} = \frac{1}{4}\left( {\widetilde{u}}_{i + 1,j}^{\text{new}} + {\widetilde{u}}_{i - 1,j}^{\text{new}} + u_{i,j + 1}^{\text{old}} + u_{i,j - 1}^{\text{old}} \right) - \frac{1}{4}h^{2}f_{\text{ij}} \\
 {\widetilde{u}}_{\text{ij}}^{\text{new}} = u_{\text{ij}}^{\text{old}} = \alpha_{\text{ij}} \\
 \end{matrix} \right.\ $$
@@ -248,7 +248,7 @@ DST&gt;Jacobi迭代（卷积加速）&gt;LU分解&gt;SOR迭代&gt;Gauss-Seidel�
 
 对于非齐次Dirichlet边界条件的Poisson方程，其格式如下：
 
-$$\left\{ \begin{matrix}
+$$\left\lbrace \begin{matrix}
 \Delta u\left( x,y \right) = f\left( x,y \right),\left( x,y \right) \in \Omega \\
 u\left( x,y \right) = \alpha\left( x,y \right),\left( x,y \right) \in \partial\Omega \\
 \end{matrix} \right.\ $$
@@ -274,7 +274,7 @@ u\left( x,y \right) = \alpha\left( x,y \right),\left( x,y \right) \in \partial\O
 
 示例方程：
 
-$$\left\{ \begin{matrix}
+$$\left\lbrace \begin{matrix}
 \Delta u = 4,x \in \Omega \\
 u = x^{2} + y^{2},x \in \partial\Omega \\
 \end{matrix},\Omega = \left( 0,1 \right) \times \left( 0,1 \right) \right.\ $$

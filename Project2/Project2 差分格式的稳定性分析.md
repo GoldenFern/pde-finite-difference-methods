@@ -10,7 +10,7 @@
 
 对于对流方程：
 
-$$\left\{ \begin{matrix}
+$$\left\lbrace \begin{matrix}
 u_{t} + au_{x} = 0 \\
 u\left( 0,x \right) = f\left( x \right) = 1\ \text{if}\ x \leq 0\ \text{else}\ 0 \\
 \end{matrix} \right.\ $$
